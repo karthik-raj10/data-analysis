@@ -186,25 +186,25 @@ async def get_dataset_stats():
         # Missing values (simulated)
         missing_values = {col: 0 for col in df.columns}  # Sample data has no missing values
         
-        # Feature distributions
+        # Feature distributions (convert numpy types to Python types)
         feature_distributions = {
             'income_distribution': {
-                'low': (df['ApplicantIncome'] < 3000).sum(),
-                'medium': ((df['ApplicantIncome'] >= 3000) & (df['ApplicantIncome'] < 7000)).sum(),
-                'high': (df['ApplicantIncome'] >= 7000).sum()
+                'low': int((df['ApplicantIncome'] < 3000).sum()),
+                'medium': int(((df['ApplicantIncome'] >= 3000) & (df['ApplicantIncome'] < 7000)).sum()),
+                'high': int((df['ApplicantIncome'] >= 7000).sum())
             },
             'loan_amount_distribution': {
-                'small': (df['LoanAmount'] < 100).sum(),
-                'medium': ((df['LoanAmount'] >= 100) & (df['LoanAmount'] < 200)).sum(),
-                'large': (df['LoanAmount'] >= 200).sum()
+                'small': int((df['LoanAmount'] < 100).sum()),
+                'medium': int(((df['LoanAmount'] >= 100) & (df['LoanAmount'] < 200)).sum()),
+                'large': int((df['LoanAmount'] >= 200).sum())
             },
             'credit_history_distribution': {
-                'good': (df['Credit_History'] == 1).sum(),
-                'poor': (df['Credit_History'] == 0).sum()
+                '1': int((df['Credit_History'] == 1).sum()),
+                '0': int((df['Credit_History'] == 0).sum())
             },
-            'education_distribution': df['Education'].value_counts().to_dict(),
-            'property_area_distribution': df['Property_Area'].value_counts().to_dict(),
-            'default_by_credit_history': df.groupby('Credit_History')['Loan_Status'].apply(lambda x: (x == 'N').mean()).to_dict()
+            'education_distribution': {str(k): int(v) for k, v in df['Education'].value_counts().to_dict().items()},
+            'property_area_distribution': {str(k): int(v) for k, v in df['Property_Area'].value_counts().to_dict().items()},
+            'default_by_credit_history': {str(k): float(v) for k, v in df.groupby('Credit_History')['Loan_Status'].apply(lambda x: (x == 'N').mean()).to_dict().items()}
         }
         
         return DatasetStats(
