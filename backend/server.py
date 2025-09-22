@@ -186,7 +186,7 @@ async def get_dataset_stats():
         # Missing values (simulated)
         missing_values = {col: 0 for col in df.columns}  # Sample data has no missing values
         
-        # Feature distributions (convert numpy types to Python types)
+        # Feature distributions (using original string labels, convert numpy types to Python types)
         feature_distributions = {
             'income_distribution': {
                 'low': int((df['ApplicantIncome'] < 3000).sum()),
@@ -202,9 +202,19 @@ async def get_dataset_stats():
                 '1': int((df['Credit_History'] == 1).sum()),
                 '0': int((df['Credit_History'] == 0).sum())
             },
-            'education_distribution': {str(k): int(v) for k, v in df['Education'].value_counts().to_dict().items()},
-            'property_area_distribution': {str(k): int(v) for k, v in df['Property_Area'].value_counts().to_dict().items()},
-            'default_by_credit_history': {str(k): float(v) for k, v in df.groupby('Credit_History')['Loan_Status'].apply(lambda x: (x == 'N').mean()).to_dict().items()}
+            'education_distribution': {
+                'Graduate': int((df['Education'] == 'Graduate').sum()),
+                'Not Graduate': int((df['Education'] == 'Not Graduate').sum())
+            },
+            'property_area_distribution': {
+                'Urban': int((df['Property_Area'] == 'Urban').sum()),
+                'Semiurban': int((df['Property_Area'] == 'Semiurban').sum()),
+                'Rural': int((df['Property_Area'] == 'Rural').sum())
+            },
+            'default_by_credit_history': {
+                '1': float(df[df['Credit_History'] == 1]['Loan_Status'].apply(lambda x: x == 'N').mean()),
+                '0': float(df[df['Credit_History'] == 0]['Loan_Status'].apply(lambda x: x == 'N').mean())
+            }
         }
         
         return DatasetStats(
