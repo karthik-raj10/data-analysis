@@ -641,15 +641,16 @@ const DataAnalysis = () => {
     );
   }
 
-  const propertyAreaData = Object.entries(stats.feature_distributions.property_area_distribution).map(([key, value]) => ({
-    name: key,
-    value: value
-  }));
+  const propertyAreaData = [
+    { name: 'Urban', value: stats.feature_distributions.property_area_distribution.Urban },
+    { name: 'Semiurban', value: stats.feature_distributions.property_area_distribution.Semiurban },
+    { name: 'Rural', value: stats.feature_distributions.property_area_distribution.Rural }
+  ];
 
-  const educationData = Object.entries(stats.feature_distributions.education_distribution).map(([key, value]) => ({
-    name: key,
-    value: value
-  }));
+  const educationData = [
+    { name: 'Graduate', value: stats.feature_distributions.education_distribution.Graduate },
+    { name: 'Not Graduate', value: stats.feature_distributions.education_distribution['Not Graduate'] }
+  ];
 
   return (
     <div className="space-y-6">
