@@ -300,11 +300,18 @@ async def get_model_performance():
     try:
         df = sample_df.copy()
         
-        # Prepare data for model evaluation
+        # Prepare data for model evaluation using the same preprocessing as training
         le_dict = joblib.load(ROOT_DIR / 'label_encoders.pkl')
         
+        # Apply label encoding with error handling for unseen labels
         for col in ['Gender', 'Married', 'Dependents', 'Education', 'Self_Employed', 'Property_Area']:
-            df[col] = le_dict[col].transform(df[col].astype(str))
+            try:
+                df[col] = le_dict[col].transform(df[col].astype(str))
+            except ValueError as e:
+                # Handle unseen labels by using the most frequent class
+                most_frequent = le_dict[col].classes_[0]
+                df[col] = df[col].apply(lambda x: most_frequent if x not in le_dict[col].classes_ else x)
+                df[col] = le_dict[col].transform(df[col].astype(str))
         
         X = df[feature_columns]
         y = df['Loan_Status'].map({'Y': 0, 'N': 1})
@@ -315,12 +322,12 @@ async def get_model_performance():
         
         accuracy = accuracy_score(y, y_pred)
         
-        # Feature importance (coefficients for logistic regression)
-        feature_importance = dict(zip(feature_columns, model.coef_[0]))
+        # Feature importance (coefficients for logistic regression) - convert to native Python types
+        feature_importance = {col: float(coef) for col, coef in zip(feature_columns, model.coef_[0])}
         
         return {
             "accuracy": float(accuracy),
-            "total_samples": len(y),
+            "total_samples": int(len(y)),
             "default_rate": float(y.mean()),
             "feature_importance": feature_importance,
             "model_type": "Logistic Regression"
