@@ -161,7 +161,8 @@ def train_model():
     joblib.dump(scaler, ROOT_DIR / 'scaler.pkl')
     joblib.dump(le_dict, ROOT_DIR / 'label_encoders.pkl')
     
-    return df
+    return create_sample_dataset()  # return unencoded version for stats
+
 
 # Initialize model on startup
 sample_df = train_model()

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
+import * as ReactRouterDOM from "react-router-dom";
+
 import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom";
+
 import axios from "axios";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, LineChart, Line, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./components/ui/card";
